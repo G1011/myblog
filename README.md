@@ -225,7 +225,3 @@ chmod +x deploy.sh && sudo ./deploy.sh
 > ⚠️ 生产环境请务必修改 `SECRET_KEY`、`POSTGRES_PASSWORD`、`FIRST_ADMIN_PASSWORD`。
 
 ---
-
-## License
-
-MIT
