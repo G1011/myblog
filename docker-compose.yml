@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-myblog}
+      POSTGRES_USER: ${POSTGRES_USER:-myblog}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-myblog_secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-myblog}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-myblog}:${POSTGRES_PASSWORD:-myblog_secret}@postgres:5432/${POSTGRES_DB:-myblog}
+      SECRET_KEY: ${SECRET_KEY:-change_me_in_production_use_random_32_chars}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      CORS_ORIGINS: '["http://localhost", "http://localhost:80"]'
+      FIRST_ADMIN_EMAIL: ${FIRST_ADMIN_EMAIL:-admin@example.com}
+      FIRST_ADMIN_USERNAME: ${FIRST_ADMIN_USERNAME:-admin}
+      FIRST_ADMIN_PASSWORD: ${FIRST_ADMIN_PASSWORD:-Admin@123456}
+    volumes:
+      - backend_uploads:/app/uploads
+      - backend_articles:/app/content/articles
+    networks:
+      - internal
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - backend_uploads:/var/www/uploads:ro
+    networks:
+      - internal
+      - external
+
+networks:
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  backend_uploads:
+  backend_articles:
