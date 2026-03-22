@@ -31,7 +31,8 @@
           I hold a dual-focus degree in Computer Science & AI from UNSW(2017-2020) and currently work at Huawei Technologies(2020-present).
           <br>
           <br>
-          I’m passionate about travel and culinary experiences — and I enjoy sharing stories from the journey. Always open to connecting with like-minded professionals for learning and collaboration. Let’s grow together!
+          I’m passionate about exploring the new，technologies, and ways of life. Enjoy travel and culinary experiences — Sharing stories from the journey. 
+          Always open to connecting with like-minded professionals for learning and collaboration. 
         </p>
 
         <!-- Social links -->
@@ -178,6 +179,6 @@ const projects = [
 ]
 
 const timeline = [
-  { year: '2020 — 至今', description: '加入华为，深耕软件工程与 AI 基础设施建设。' },
+  { year: '2020 — present', description: 'Full-stack software engineer at Huawei Technologies' },
 ]
 </script>
